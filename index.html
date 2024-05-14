@@ -24,34 +24,18 @@
             <h1>Device Manuals Lookup</h1>
         </header>
         <main>
-            <section id="company-section">
-                <h2>Select a Company</h2>
-                <div id="company-list" class="list">
-                    <!-- List of companies will be populated here -->
+            <section id="selection-section" class="card">
+                <div class="card-front">
+                    <h2>Select a Company</h2>
+                    <div id="company-list" class="list">
+                        <!-- List of companies will be populated here -->
+                    </div>
                 </div>
-            </section>
-            <section id="type-section" class="hidden">
-                <h2>Select a Type</h2>
-                <div id="type-list" class="list">
-                    <!-- List of types will be populated here -->
-                </div>
-            </section>
-            <section id="series-section" class="hidden">
-                <h2>Select a Series</h2>
-                <div id="series-list" class="list">
-                    <!-- List of series will be populated here -->
-                </div>
-            </section>
-            <section id="model-section" class="hidden">
-                <h2>Select a Model</h2>
-                <div id="model-list" class="list">
-                    <!-- List of models will be populated here -->
-                </div>
-            </section>
-            <section id="manual-section" class="hidden">
-                <h2>Available Manuals</h2>
-                <div id="manual-options" class="list">
-                    <!-- Manual options will be displayed here -->
+                <div class="card-back hidden">
+                    <h2 id="next-prompt"></h2>
+                    <div id="next-list" class="list">
+                        <!-- Next list will be populated here -->
+                    </div>
                 </div>
             </section>
         </main>

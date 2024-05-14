@@ -1,75 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
     const data = JSON.parse("<<INSERT JSON STRINGIFIED DATA HERE>>");
     const companyList = document.getElementById("company-list");
-    const typeSection = document.getElementById("type-section");
-    const typeList = document.getElementById("type-list");
-    const seriesSection = document.getElementById("series-section");
-    const seriesList = document.getElementById("series-list");
-    const modelSection = document.getElementById("model-section");
-    const modelList = document.getElementById("model-list");
-    const manualSection = document.getElementById("manual-section");
-    const manualOptions = document.getElementById("manual-options");
+    const selectionSection = document.getElementById("selection-section");
+    const nextPrompt = document.getElementById("next-prompt");
+    const nextList = document.getElementById("next-list");
 
-    function resetSections() {
-        typeSection.classList.add("hidden");
-        typeList.innerHTML = "";
-        seriesSection.classList.add("hidden");
-        seriesList.innerHTML = "";
-        modelSection.classList.add("hidden");
-        modelList.innerHTML = "";
-        manualSection.classList.add("hidden");
-        manualOptions.innerHTML = "";
+    function resetView() {
+        selectionSection.classList.remove("flip");
+        nextList.innerHTML = "";
     }
 
-    // Populate company list
-    Object.keys(data).forEach(company => {
-        const companyItem = document.createElement("div");
-        companyItem.className = "list-item";
-        companyItem.textContent = company;
-        companyItem.addEventListener("click", () => {
-            resetSections();
-            Object.keys(data[company]).forEach(type => {
-                const typeItem = document.createElement("div");
-                typeItem.className = "list-item";
-                typeItem.textContent = type;
-                typeItem.addEventListener("click", () => {
-                    resetSections();
-                    seriesSection.classList.remove("hidden");
-                    Object.keys(data[company][type]).forEach(series => {
-                        const seriesItem = document.createElement("div");
-                        seriesItem.className = "list-item";
-                        seriesItem.textContent = series;
-                        seriesItem.addEventListener("click", () => {
-                            resetSections();
-                            modelSection.classList.remove("hidden");
-                            data[company][type][series].forEach(modelData => {
-                                const modelItem = document.createElement("div");
-                                modelItem.className = "list-item";
-                                modelItem.textContent = modelData.Model;
-                                modelItem.addEventListener("click", () => {
-                                    manualOptions.innerHTML = "";
-                                    const manuals = ["User Manual", "Service Manual", "Technical Data", "Software"];
-                                    manuals.forEach(manual => {
-                                        const manualOption = document.createElement("div");
-                                        manualOption.className = "list-item";
-                                        manualOption.textContent = manual;
-                                        if (!modelData[manual] || modelData[manual] === "Not Available") {
-                                            manualOption.classList.add("grayed-out");
-                                        }
-                                        manualOptions.appendChild(manualOption);
-                                    });
-                                    manualSection.classList.remove("hidden");
-                                });
-                                modelList.appendChild(modelItem);
-                            });
-                        });
-                        seriesList.appendChild(seriesItem);
-                    });
-                });
-                typeList.appendChild(typeItem);
-            });
-            typeSection.classList.remove("hidden");
+    function flipCard(prompt, items) {
+        nextPrompt.textContent = prompt;
+        nextList.innerHTML = "";
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "list-item";
+            itemDiv.textContent = item.text;
+            itemDiv.addEventListener("click", item.onClick);
+            nextList.appendChild(itemDiv);
         });
-        companyList.appendChild(companyItem);
+        setTimeout(() => {
+            selectionSection.classList.add("flip");
+        }, 100);
+    }
+
+    function populateList(list, items, nextPrompt, nextItemsGetter) {
+        list.innerHTML = "";
+        items.forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "list-item";
+            itemDiv.textContent = item;
+            itemDiv.addEventListener("click", () => {
+                const nextItems = nextItemsGetter(item);
+                flipCard(nextPrompt, nextItems);
+            });
+            list.appendChild(itemDiv);
+        });
+    }
+
+    const companies = Object.keys(data);
+    populateList(companyList, companies, "Select a Type", company => {
+        return Object.keys(data[company]).map(type => ({
+            text: type,
+            onClick: () => {
+                const types = Object.keys(data[company][type]);
+                flipCard("Select a Series", types.map(series => ({
+                    text: series,
+                    onClick: () => {
+                        const models = data[company][type][series].map(modelData => ({
+                            text: modelData.Model,
+                            onClick: () => {
+                                const manuals = ["User Manual", "Service Manual", "Technical Data", "Software"].map(manual => ({
+                                    text: manual,
+                                    onClick: () => {}
+                                }));
+                                flipCard("Available Manuals", manuals);
+                            }
+                        }));
+                        flipCard("Select a Model", models);
+                    }
+                })));
+            }
+        }));
     });
 });
