@@ -17,11 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextList = document.getElementById("next-list");
 
     function resetView() {
+        console.log("Resetting view...");
         selectionSection.classList.remove("flip");
         nextList.innerHTML = "";
     }
 
     function flipCard(prompt, items) {
+        console.log("Flipping card with prompt:", prompt);
         nextPrompt.textContent = prompt;
         nextList.innerHTML = "";
         items.forEach(item => {
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function populateList(list, items, nextPrompt, nextItemsGetter) {
+        console.log("Populating list with items:", items);
         list.innerHTML = "";
         items.forEach(item => {
             const itemDiv = document.createElement("div");
