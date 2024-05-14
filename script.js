@@ -1,5 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const data = JSON.parse("<<INSERT JSON STRINGIFIED DATA HERE>>");
+    const data = {
+        "Eppendorf": {
+            "Centrifuge": {
+                "5702": [
+                    {"Model": "5702", "User Manual": "Available", "Service Manual": "Available", "Technical Data": "Not Available", "Software": "Available"},
+                    {"Model": "5702 R", "User Manual": "Available", "Service Manual": "Not Available", "Technical Data": "Available", "Software": "Not Available"},
+                    {"Model": "5702 RH", "User Manual": "Not Available", "Service Manual": "Available", "Technical Data": "Available", "Software": "Available"}
+                ]
+            }
+        }
+    };
+
     const companyList = document.getElementById("company-list");
     const selectionSection = document.getElementById("selection-section");
     const nextPrompt = document.getElementById("next-prompt");
@@ -40,17 +51,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const companies = Object.keys(data);
+    console.log("Companies:", companies);
     populateList(companyList, companies, "Select a Type", company => {
+        console.log("Selected Company:", company);
         return Object.keys(data[company]).map(type => ({
             text: type,
             onClick: () => {
-                const types = Object.keys(data[company][type]);
-                flipCard("Select a Series", types.map(series => ({
-                    text: series,
+                console.log("Selected Type:", type);
+                const series = Object.keys(data[company][type]);
+                console.log("Series:", series);
+                flipCard("Select a Series", series.map(seriesItem => ({
+                    text: seriesItem,
                     onClick: () => {
-                        const models = data[company][type][series].map(modelData => ({
+                        console.log("Selected Series:", seriesItem);
+                        const models = data[company][type][seriesItem].map(modelData => ({
                             text: modelData.Model,
                             onClick: () => {
+                                console.log("Selected Model:", modelData.Model);
                                 const manuals = ["User Manual", "Service Manual", "Technical Data", "Software"].map(manual => ({
                                     text: manual,
                                     onClick: () => {}
